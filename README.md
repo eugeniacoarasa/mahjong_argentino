@@ -53,3 +53,38 @@ mahjong_argentino/
 ├── sw.js            # Service Worker para la gestión de caché y PWA
 ├── manifest.json    # Manifiesto de la aplicación web progresiva
 └── README.md        # Documentación oficial del proyecto
+```
+---
+## 🚀 Instalación y Ejecución Local
+Si deseas clonar y ejecutar este proyecto en tu entorno local, sigue estos sencillos pasos:
+
+### Clona el repositorio:
+
+Bash
+git clone [https://github.com/eugeniacoarasa/mahjong_argentino.git](https://github.com/eugeniacoarasa/mahjong_argentino.git)
+Accede al directorio del proyecto:
+
+Bash
+cd mahjong_argentino
+Ejecuta el proyecto:
+
+Puedes abrir el archivo index.html directamente en tu navegador web preferido, o
+
+Utilizar una extensión de desarrollo local como Live Server en Visual Studio Code para una mejor experiencia de recarga en caliente.
+
+## 🎮 Cómo Jugar
+Accede a la versión online desde el enlace de producción.
+
+Observa el tablero compuesto por fichas apiladas con motivos argentinos.
+
+Identifica y selecciona pares de fichas libres (aquellas que no estén bloqueadas a los lados o cubiertas por encima).
+
+Haz clic o toca las fichas para hacerlas desaparecer hasta limpiar por completo el tablero.
+
+---
+## 👩‍💻 Autora
+Desarrollado con ❤️ por Eugenia Coarasa.
+
+GitHub: @eugeniacoarasa
+---
+
