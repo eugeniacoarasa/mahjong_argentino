@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahjong Argentino</title>
+    <!-- Favicon y Iconos de la App -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="apple-touch-icon" href="images/icon_192.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c5e3b">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ==========================================
+         PANTALLA DE INICIO (PORTADA)
+         ========================================== -->
+    <div id="start-screen" class="screen">
+        <h1 class="game-title">Mahjong Argentino</h1>
+        <p class="game-subtitle">Selecciona un nivel para comenzar</p>
+
+        <!-- Tarjetas de selección de niveles -->
+        <div class="level-buttons">
+            <button class="level-card" onclick="startGame('level1')">
+                <div class="level-preview">
+                    <img src="images/tablero_piramide.png" alt="Nivel 1 Pirámide" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <span>Nivel 1: Pirámide</span>
+            </button>
+            <button class="level-card" onclick="startGame('level2')">
+                <div class="level-preview">
+                    <img src="images/tablero_cruz.png" alt="Nivel 2 Cruz" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <span>Nivel 2: Cruz</span>
+            </button>
+        </div>
+
+        <!-- Botones de utilidad inferiores (Sonido, Pantalla completa, Ayuda) -->
+        <div class="start-utility-bar">
+            <button class="btn-icon" id="start-sound-btn" onclick="toggleSound()" title="Silenciar / Activar Sonido">🔊</button>
+            <button class="btn-icon" onclick="toggleFullscreen()" title="Pantalla Completa">⛶</button>
+            <button class="btn-icon" onclick="openHelpModal()" title="Ayuda / Reglas">?</button>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         PANTALLA DE JUEGO
+         ========================================== -->
+    <div id="game-screen" class="screen hidden">
+        <div id="game-container">
+            
+            <!-- Barra Superior: Menú, Estadísticas y Botones -->
+            <div class="game-header">
+                <button class="btn-neon btn-abandon" onclick="openAbandonModal()">🏠 Menú / Salir</button>
+                <div class="stats-group">
+                    <span id="level-title" class="stat-badge">Nivel 1: Pirámide</span>
+                    <span class="stat-badge">⏱️ <span id="timer">00:00</span></span>
+                    <span class="stat-badge">🧩 <span id="pairs-matched">0</span>/<span id="pairs-total">30</span></span>
+                </div>
+                <div class="top-icon-buttons">
+                    <button class="btn-icon" id="sound-btn" onclick="toggleSound()">🔊</button>
+                    <button class="btn-icon" onclick="toggleFullscreen()">⛶</button>
+                    <button class="btn-icon" onclick="openHelpModal()">?</button>
+                </div>
+            </div>
+
+            <!-- Barra Media: Deshacer, Parking y Pista -->
+            <div class="mid-game-bar">
+                <button class="btn-action-side disabled" id="undo-btn" onclick="undoMove()">
+                    <span class="icon">↩️</span>
+                    <span>Deshacer</span>
+                </button>
+
+                <button class="btn-action-side disabled" id="parking-action-btn" onclick="sendSelectedToParking()">
+                    <span class="icon">📦</span>
+                    <span>Parking</span>
+                </button>
+
+                <div class="parking-box" id="parking-box">
+                    <div class="parked-slot" data-index="0"></div>
+                    <div class="parked-slot" data-index="1"></div>
+                    <div class="parked-slot" data-index="2"></div>
+                    <div class="parked-slot" data-index="3"></div>
+                </div>
+
+                <button class="btn-action-side disabled" id="hint-btn" onclick="showHint()">
+                    <span class="icon">💡</span>
+                    <span>Pista</span>
+                </button>
+            </div>
+
+            <!-- Tablero de Juego (Tapete) -->
+            <div id="board-container">
+                <div id="board"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         VENTANAS MODALES (Victoria, Ayuda, Abandono)
+         ========================================== -->
+    <div id="victory-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>🎉 ¡Nivel Completado! 🎉</h2>
+            <p>Has despejado todas las fichas del tablero.</p>
+            <div class="victory-stats">
+                <div>⏱️ Tiempo: <span id="final-time">00:00</span></div>
+                <div>🧩 Pares: <span id="final-pairs">0/30</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-neon" onclick="restartLevel()">Jugar de Nuevo</button>
+                <button class="btn-neon btn-secondary" onclick="goToMenu()">Menú Principal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content help-content">
+            <h2>📜 Reglas del Juego</h2>
+            <div class="help-body">
+                <p><strong>1. Objetivo:</strong> Encuentra y empareja fichas idénticas que estén "libres".</p>
+                <p><strong>2. Fichas libres:</strong> Una ficha está libre si no tiene ninguna otra encima y al menos uno de sus lados está despejado.</p>
+                <p><strong>3. Caja de Reserva (Parking):</strong> Envía fichas al parking con doble toque (máximo 4 espacios).</p>
+                <p><strong>4. Controles:</strong> Toca o haz clic en las fichas para interactuar.</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-neon" onclick="closeHelpModal()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="abandon-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>⚠️ ¿Abandonar partida?</h2>
+            <p>If sales ahora, perderás el progreso actual del nivel.</p>
+            <div class="modal-buttons">
+                <button class="btn-neon btn-danger" onclick="confirmAbandon()">Sí, salir</button>
+                <button class="btn-neon btn-secondary" onclick="closeAbandonModal()">Continuar jugando</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas para los efectos de Confeti -->
+    <canvas id="confetti-canvas"></canvas>
+
+
+    <!-- ==========================================
+         FIRMA DE LA AUTORA (Siempre visible y fija abajo)
+         ========================================== -->
+    <footer style="position: fixed; bottom: 5px; left: 0; width: 100%; text-align: center; font-size: 0.8rem; color: var(--baltic-blue); text-shadow: 0 1px 3px var(--neon-blue); z-index: 9999; font-family: var(--font-title); pointer-events: none;">
+        Hecho con 💖 por <a href="https://github.com/eugeniacoarasa" target="_blank" style="color: var(--baltic-blue); text-decoration: underline; font-weight: bold; pointer-events: auto;">Eugenia Coarasa</a>
+    </footer>
+
+
+    <!-- Scripts de la Aplicación -->
+    <script src="game.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+                    .catch(err => console.log('Error al registrar el Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>
